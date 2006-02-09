@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!-- Edited By POOL -->
+<!DOCTYPE POOLFILECATALOG SYSTEM "InMemory">
+<POOLFILECATALOG>
+
+  <File ID="2EE374AD-2A93-DA11-B605-000E0C4DE481">
+    <physical>
+      <pfn filetype="POOL_RDBMS" name="sqlite_file:sistripcabling.db"/>
+    </physical>
+    <logical/>
+  </File>
+
+  <File ID="08572E35-C398-DA11-B967-000E0C4D3802">
+    <physical>
+      <pfn filetype="ROOT_All" name="file:stripdigi.root"/>
+    </physical>
+    <logical/>
+  </File>
+
+</POOLFILECATALOG>
