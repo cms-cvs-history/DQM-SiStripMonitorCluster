@@ -3,16 +3,16 @@
 <!DOCTYPE POOLFILECATALOG SYSTEM "InMemory">
 <POOLFILECATALOG>
 
-  <File ID="2EE374AD-2A93-DA11-B605-000E0C4DE481">
+  <File ID="E4107D19-E5AD-DA11-9664-000E0C4DEB2A">
     <physical>
-      <pfn filetype="POOL_RDBMS" name="sqlite_file:sistripcabling.db"/>
+      <pfn filetype="ROOT_All" name="file:stripdigi.root"/>
     </physical>
     <logical/>
   </File>
 
-  <File ID="08572E35-C398-DA11-B967-000E0C4D3802">
+  <File ID="7E785645-C0AD-DA11-BC3A-000E0C4DEB2A">
     <physical>
-      <pfn filetype="ROOT_All" name="file:stripdigi.root"/>
+      <pfn filetype="POOL_RDBMS" name="sqlite_file:sistripcabling.db"/>
     </physical>
     <logical/>
   </File>
