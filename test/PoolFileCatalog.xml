@@ -2,15 +2,7 @@
 <!-- Edited By POOL -->
 <!DOCTYPE POOLFILECATALOG SYSTEM "InMemory">
 <POOLFILECATALOG>
-
-  <File ID="E4107D19-E5AD-DA11-9664-000E0C4DEB2A">
-    <physical>
-      <pfn filetype="ROOT_All" name="file:stripdigi.root"/>
-    </physical>
-    <logical/>
-  </File>
-
-  <File ID="7E785645-C0AD-DA11-BC3A-000E0C4DEB2A">
+  <File ID="40C02796-46C9-DA11-8C89-000E0C5CE283">
     <physical>
       <pfn filetype="POOL_RDBMS" name="sqlite_file:sistripcabling.db"/>
     </physical>
