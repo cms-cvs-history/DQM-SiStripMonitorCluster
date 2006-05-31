@@ -4,6 +4,7 @@
                                string ClusterProducer="ThreeThresholdClusterizer"
                                string ClusterLabel=""
                                //
+                               bool SelectAllDetectors = false
                                bool ShowMechanicalStructureView = true
                                bool ShowReadoutView = false
                                bool ShowControlView = false
