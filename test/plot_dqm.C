@@ -11,7 +11,8 @@
   gStyle->SetMarkerColor(1);
 
   // read in file with histograms
-  TString histo_file = "test_digi_cluster.root";
+//  TString histo_file = "test_digi_cluster.root";
+  TString histo_file = "~/scratch0/test_digi_cluster.root";
   TFile dqmf(histo_file);
 //  dqmf.ls();
 
