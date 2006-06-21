@@ -8,7 +8,7 @@
                                bool ShowMechanicalStructureView = true
                                bool ShowReadoutView = false
                                bool ShowControlView = false
-                               bool OutputMEsInRootFile = true
+                               bool OutputMEsInRootFile = false
                                string OutputFileName="test_digi_cluster.root"
        }
 

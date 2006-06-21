@@ -1,7 +1,7 @@
        module monitorHlt = SiStripMonitorHLT
        {
                                string HLTProducer="trigger"
-                               bool OutputMEsInRootFile = true
+                               bool OutputMEsInRootFile = false
                                string OutputFileName="test_digi_hlt.root"
        }
 
