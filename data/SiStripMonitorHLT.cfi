@@ -1,9 +1,0 @@
-       module SiStripMonitorHLT = SiStripMonitorHLT
-       {
-          string HLTProducer="trigger"
-          # by default do not write out any file with histograms
-          # can overwrite this in .cfg file with: replace SiStripMonitorHLT.OutputMEsInRootFile = true
-          bool OutputMEsInRootFile = false
-          string OutputFileName="test_digi_hlt.root"
-       }
-
