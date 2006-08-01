@@ -1,7 +1,7 @@
        # SiStripMonitorCluster
        module SiStripMonitorCluster = SiStripMonitorCluster
        {
-         string ClusterProducer="ThreeThresholdClusterizer"
+         string ClusterProducer="siStripClusters"
          string ClusterLabel=""
          #
          bool SelectAllDetectors = false
