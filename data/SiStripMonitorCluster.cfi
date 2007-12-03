@@ -1,5 +1,3 @@
-include "CommonTools/SiStripZeroSuppression/data/SiStripNoiseService.cfi"
-
 # SiStripMonitorCluster
 module SiStripMonitorCluster = SiStripMonitorCluster
 {
@@ -16,9 +14,5 @@ module SiStripMonitorCluster = SiStripMonitorCluster
   # can overwrite this in .cfg file with: replace SiStripMonitorCluster.OutputMEsInRootFile = true
   bool OutputMEsInRootFile = false
   string OutputFileName="test_digi_cluster.root"
-  ##
-  ##Parameters to configure SiStripNoiseService 
-  ##
-  using SiStripNoiseServiceParameters
 }
 
