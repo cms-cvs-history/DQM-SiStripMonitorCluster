@@ -1,9 +1,0 @@
-       module SiStripMonitorFilter = SiStripMonitorFilter
-       {
-          string FilterProducer="ClusterMTCCFilter"
-          # by default do not write out any file with histograms
-          # can overwrite this in .cfg file with: replace SiStripMonitorFilter.OutputMEsInRootFile = true
-          bool OutputMEsInRootFile = false
-          string OutputFileName="dqm_sistrip_filter.root"
-       }
-
