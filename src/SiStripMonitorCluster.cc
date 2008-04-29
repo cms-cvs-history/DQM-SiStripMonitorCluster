@@ -5,7 +5,7 @@
 */
 // Original Author:  Dorian Kcira
 //         Created:  Wed Feb  1 16:42:34 CET 2006
-// $Id: SiStripMonitorCluster.cc,v 1.36 2008/03/04 14:46:50 dutta Exp $
+// $Id: SiStripMonitorCluster.cc,v 1.37 2008/04/19 20:13:07 dutta Exp $
 #include <vector>
 #include <numeric>
 #include <fstream>
@@ -180,6 +180,7 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
   // get collection of DetSetVector of clusters from Event
   edm::Handle< edm::DetSetVector<SiStripCluster> > cluster_detsetvektor;
   iEvent.getByLabel(clusterProducer, cluster_detsetvektor);
+  if (!cluster_detsetvektor.isValid()) return;
   // loop over MEs. Mechanical structure view. No need for condition here. If map is empty, nothing should happen.
   for (std::map<uint32_t, ModMEs>::const_iterator iterMEs = ClusterMEs.begin() ; iterMEs!=ClusterMEs.end() ; iterMEs++) {
     uint32_t detid = iterMEs->first;  ModMEs modSingle = iterMEs->second;
