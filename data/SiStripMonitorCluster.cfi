@@ -14,5 +14,6 @@ module SiStripMonitorCluster = SiStripMonitorCluster
   # can overwrite this in .cfg file with: replace SiStripMonitorCluster.OutputMEsInRootFile = true
   bool OutputMEsInRootFile = false
   string OutputFileName="test_digi_cluster.root"
+  string StripQualityLabel = ""
 }
 
