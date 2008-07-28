@@ -6,9 +6,9 @@
 // Original Author:  Dorian Kcira
 //         Created:  Wed Feb  1 16:42:34 CET 2006
 //<<<<<<< SiStripMonitorCluster.cc
-// $Id: SiStripMonitorCluster.cc,v 1.37.2.3 2008/07/27 22:18:39 dutta Exp $
+// $Id: SiStripMonitorCluster.cc,v 1.37.2.4 2008/07/28 20:08:19 dutta Exp $
 //=======
-// $Id: SiStripMonitorCluster.cc,v 1.37.2.3 2008/07/27 22:18:39 dutta Exp $
+// $Id: SiStripMonitorCluster.cc,v 1.37.2.4 2008/07/28 20:08:19 dutta Exp $
 //>>>>>>> 1.37.2.1
 #include <vector>
 #include <numeric>
@@ -208,8 +208,7 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
   // retrieve producer name of input StripClusterCollection
   std::string clusterProducer = conf_.getParameter<std::string>("ClusterProducer");
   // get collection of DetSetVector of clusters from Event
-  //   edm::Handle< edmNew::DetSetVector<SiStripCluster> > cluster_detsetvektor;
-  //edm::Handle< edm::DetSetVector<SiStripCluster> > cluster_detsetvektor;
+  edm::Handle< edm::DetSetVector<SiStripCluster> > cluster_detsetvektor;
   iEvent.getByLabel(clusterProducer, cluster_detsetvektor);
 
   //if (!cluster_detsetvektor.isValid()) std::cout<<" collection not valid"<<std::endl;
