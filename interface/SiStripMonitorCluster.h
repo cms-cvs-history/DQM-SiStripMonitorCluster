@@ -8,7 +8,7 @@
 */
 // Original Author:  dkcira
 //         Created:  Wed Feb  1 16:47:14 CET 2006
-// $Id: SiStripMonitorCluster.h,v 1.16.2.1 2008/07/21 10:28:23 charaf Exp $
+// $Id: SiStripMonitorCluster.h,v 1.16.2.2 2008/07/27 22:18:38 dutta Exp $
 #include <memory>
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -37,21 +37,13 @@ class SiStripMonitorCluster : public edm::EDAnalyzer {
   struct ModMEs{ // MEs for one single detector module
 
     MonitorElement* NumberOfClusters;
-    MonitorElement* NumberOfClustersTrend;
     MonitorElement* ClusterPosition;
-    MonitorElement* ClusterPositionTrend;
     MonitorElement* ClusterWidth;
-    MonitorElement* ClusterWidthTrend;
     MonitorElement* ClusterCharge;
-    MonitorElement* ClusterChargeTrend;
     MonitorElement* ClusterNoise;
-    MonitorElement* ClusterNoiseTrend;
     MonitorElement* ClusterSignalOverNoise;
-    MonitorElement* ClusterSignalOverNoiseTrend;
     MonitorElement* ModuleLocalOccupancy;
-    MonitorElement* ModuleLocalOccupancyTrend;
     MonitorElement* NrOfClusterizedStrips; // can be used at client level for occupancy calculations
-    MonitorElement* NrOfClusterizedStripsTrend; // can be used at client level for occupancy calculations
   };
 
   struct LayerMEs{ // MEs for Layer Level
@@ -100,7 +92,7 @@ class SiStripMonitorCluster : public edm::EDAnalyzer {
  private:
   DQMStore* dqmStore_;
   edm::ParameterSet conf_;
-  std::map<uint32_t, ModMEs> ClusterMEs;
+  std::map<uint32_t, ModMEs> ModuleMEMap;
   std::map<std::string, LayerMEs> LayerMEMap;
 
   // flags

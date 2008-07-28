@@ -6,9 +6,9 @@
 // Original Author:  Dorian Kcira
 //         Created:  Wed Feb  1 16:42:34 CET 2006
 //<<<<<<< SiStripMonitorCluster.cc
-// $Id: SiStripMonitorCluster.cc,v 1.37.2.2 2008/07/21 10:28:23 charaf Exp $
+// $Id: SiStripMonitorCluster.cc,v 1.37.2.3 2008/07/27 22:18:39 dutta Exp $
 //=======
-// $Id: SiStripMonitorCluster.cc,v 1.37.2.2 2008/07/21 10:28:23 charaf Exp $
+// $Id: SiStripMonitorCluster.cc,v 1.37.2.3 2008/07/27 22:18:39 dutta Exp $
 //>>>>>>> 1.37.2.1
 #include <vector>
 #include <numeric>
@@ -113,7 +113,7 @@ void SiStripMonitorCluster::beginRun(const edm::Run& run, const edm::EventSetup&
   } else if (reset_each_run) {
     edm::LogInfo("SiStripMonitorCluster") <<"SiStripMonitorCluster::beginRun: " 
 					  << " Resetting MEs ";        
-    for (std::map<uint32_t, ModMEs >::const_iterator idet = ClusterMEs.begin() ; idet!=ClusterMEs.end() ; idet++) {
+    for (std::map<uint32_t, ModMEs >::const_iterator idet = ModuleMEMap.begin() ; idet!=ModuleMEMap.end() ; idet++) {
       ResetModuleMEs(idet->first);
     }
   }
@@ -123,13 +123,11 @@ void SiStripMonitorCluster::beginRun(const edm::Run& run, const edm::EventSetup&
 void SiStripMonitorCluster::createMEs(const edm::EventSetup& es){
   if ( show_mechanical_structure_view ){
     // take from eventSetup the SiStripDetCabling object - here will use SiStripDetControl later on
-    edm::ESHandle<SiStripDetCabling> detcabling;
-    es.get<SiStripDetCablingRcd>().get(detcabling);
+    es.get<SiStripDetCablingRcd>().get(SiStripDetCabling_);
     
-    // get list of active detectors from SiStripDetCabling - this will change and be taken from a SiStripDetControl object
+    // get list of active detectors from SiStripDetCabling 
     std::vector<uint32_t> activeDets;
-    activeDets.clear(); // just in case
-    detcabling->addActiveDetectorsRawIds(activeDets);
+    SiStripDetCabling_->addActiveDetectorsRawIds(activeDets);
     
     std::vector<uint32_t> SelectedDetIds;
     if(select_all_detectors){
@@ -145,20 +143,18 @@ void SiStripMonitorCluster::createMEs(const edm::EventSetup& es){
       if(tecon) substructure.getTECDetectors(activeDets, SelectedDetIds, 0, 0, 0, 0, 0, 0); // this adds rawDetIds to SelectedDetIds
       
     }
-    
-    // remove any eventual zero elements - there should be none, but just in case
-    for(std::vector<uint32_t>::iterator idets = SelectedDetIds.begin(); idets != SelectedDetIds.end(); idets++){
-      if(*idets == 0) SelectedDetIds.erase(idets);
-    }
-    
     SiStripFolderOrganizer folder_organizer;
     folder_organizer.setSiStripFolder();
 
     // loop over detectors and book MEs
     edm::LogInfo("SiStripTkDQM|SiStripMonitorCluster")<<"nr. of SelectedDetIds:  "<<SelectedDetIds.size();
-    for(std::vector<uint32_t>::const_iterator detid_iterator = SelectedDetIds.begin(); detid_iterator!=SelectedDetIds.end(); detid_iterator++){
-
+    for(std::vector<uint32_t>::iterator detid_iterator = SelectedDetIds.begin(); detid_iterator!=SelectedDetIds.end(); detid_iterator++){
       uint32_t detid = (*detid_iterator);
+      // remove any eventual zero elements - there should be none, but just in case
+      if(detid == 0) {
+	SelectedDetIds.erase(detid_iterator);
+        continue;
+      }
 
       ModMEs mod_single;
 
@@ -166,8 +162,8 @@ void SiStripMonitorCluster::createMEs(const edm::EventSetup& es){
       folder_organizer.setDetectorFolder(detid); // pass the detid to this method
       if (reset_each_run) ResetModuleMEs(detid);
       createModuleMEs(mod_single, detid);
-      // append to ClusterMEs
-      ClusterMEs.insert( std::make_pair(detid, mod_single));
+      // append to ModuleMEMap
+      ModuleMEMap.insert( std::make_pair(detid, mod_single));
 
       // Created Layer Level MEs if thet=y are npt created already
       std::pair<std::string,int32_t> det_layer_pair = folder_organizer.GetSubDetAndLayer(detid);
@@ -203,11 +199,11 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
   edm::ESHandle<SiStripGain> gainHandle;
   iSetup.get<SiStripGainRcd>().get(gainHandle);
 
+  std::string quality_label  = conf_.getParameter<std::string>("StripQualityLabel");
   edm::ESHandle<SiStripQuality> qualityHandle;
-  iSetup.get<SiStripQualityRcd>().get(qualityHandle);
+  iSetup.get<SiStripQualityRcd>().get(quality_label,qualityHandle);
 
-  edm::ESHandle<SiStripDetCabling> detcabling;
-  iSetup.get<SiStripDetCablingRcd>().get(detcabling);
+  iSetup.get<SiStripDetCablingRcd>().get(SiStripDetCabling_);
 
   // retrieve producer name of input StripClusterCollection
   std::string clusterProducer = conf_.getParameter<std::string>("ClusterProducer");
@@ -219,10 +215,20 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
   //if (!cluster_detsetvektor.isValid()) std::cout<<" collection not valid"<<std::endl;
   if (!cluster_detsetvektor.isValid()) return;
 
+  // get list of active detectors from SiStripDetCabling 
+  std::vector<uint32_t> SelectedDetIds;
+  SiStripDetCabling_->addActiveDetectorsRawIds(SelectedDetIds);
+  
   // loop over MEs. Mechanical structure view. No need for condition here. If map is empty, nothing should happen.
-  for (std::map<uint32_t, ModMEs>::const_iterator iterMEs = ClusterMEs.begin() ; iterMEs!=ClusterMEs.end() ; iterMEs++) {
-    uint32_t detid = iterMEs->first;  
-    ModMEs mod_single = iterMEs->second;
+  for(std::vector<uint32_t>::const_iterator detid_iterator = SelectedDetIds.begin(); detid_iterator!=SelectedDetIds.end(); detid_iterator++){
+    if (*detid_iterator == 0) continue;
+    uint32_t detid = (*detid_iterator);
+
+    // Get s Module level MEs
+    std::map<uint32_t, ModMEs>::const_iterator imodME = ModuleMEMap.find(detid);
+    ModMEs mod_single;
+    if (imodME != ModuleMEMap.end()) mod_single = imodME->second;
+
     // Get Layer level MEs
     std::string label;
     getLayerLabel(detid, label);
@@ -231,7 +237,7 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
     LayerMEs layer_single;
     std::map<std::string, LayerMEs>::iterator iLayerME = LayerMEMap.find(layer_id);
     if(iLayerME!=LayerMEMap.end()) layer_single = iLayerME->second; 
-
+    
     // get from DetSetVector the DetSet of clusters belonging to one detid - first make sure there exists clusters with this id
     
     edm::DetSetVector<SiStripCluster>::const_iterator isearch = cluster_detsetvektor->find(detid); // search  clusters of detid
@@ -246,7 +252,7 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
     
     //cluster_detset is a structure, cluster_detset.data is a std::vector<SiStripCluster>, cluster_detset.id is uint32_t
     edm::DetSet<SiStripCluster> cluster_detset = (*cluster_detsetvektor)[detid]; // the statement above makes sure there exists an element with 'detid'
-      
+    
     if(moduleswitchncluson && (mod_single.NumberOfClusters != NULL)){ // nr. of clusters per module
       (mod_single.NumberOfClusters)->Fill(static_cast<float>(cluster_detset.size()));
     }
@@ -268,7 +274,7 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
       short cluster_width    = ampls.size(); 
       // add nr of strips of this cluster to total nr. of clusterized strips
       total_clusterized_strips = total_clusterized_strips + cluster_width; 
-
+      
       // cluster signal and noise from the amplitudes
       float cluster_signal = 0.0;
       float cluster_noise  = 0.0;
@@ -297,33 +303,33 @@ void SiStripMonitorCluster::analyze(const edm::Event& iEvent, const edm::EventSe
 	   cluster_signal/cluster_noise > ps.getParameter<double>("maxStoN") ||
 	   cluster_width < ps.getParameter<double>("minWidth") ||
 	   cluster_width  > ps.getParameter<double>("maxWidth")) ) continue;  
-
+      
       ClusterProperties cluster_properties;
       cluster_properties.charge    = cluster_signal;
       cluster_properties.position  = cluster_position;
       cluster_properties.width     = cluster_width;
       cluster_properties.noise     = cluster_noise;
-
+      
       // Fill Module Level MEs
-      fillModuleMEs(mod_single, cluster_properties);
+      if (imodME != ModuleMEMap.end()) fillModuleMEs(mod_single, cluster_properties);
 
       // Fill Layer Level MEs
       if (iLayerME!=LayerMEMap.end()) fillLayerMEs(layer_single, cluster_properties);
     }
-
-    if(mod_single.NrOfClusterizedStrips){ // nr of clusterized strips
+    
+    if(mod_single.NrOfClusterizedStrips && imodME != ModuleMEMap.end()){ // nr of clusterized strips
       mod_single.NrOfClusterizedStrips->Fill(static_cast<float>(total_clusterized_strips));
     }
     
-    short total_nr_strips = detcabling->nApvPairs(detid) * 128; // get correct # of avp pairs
+    short total_nr_strips = SiStripDetCabling_->nApvPairs(detid) * 2 * 128; // get correct # of avp pairs
     float local_occupancy = static_cast<float>(total_clusterized_strips)/static_cast<float>(total_nr_strips);
-    if(moduleswitchlocaloccupancy && mod_single.ModuleLocalOccupancy){ // nr of clusterized strips
+    if(moduleswitchlocaloccupancy && imodME != ModuleMEMap.end()){ // Occupancy
       mod_single.ModuleLocalOccupancy->Fill(local_occupancy);
     }
-   
+    
     if (layerswitchlocaloccupancy && (iLayerME!=LayerMEMap.end())) {
       fillME(layer_single.LayerLocalOccupancy,local_occupancy);
-      if (createTrendMEs) fillTrend(layer_single.LayerClusterStoNTrend,local_occupancy);
+      if (createTrendMEs) fillTrend(layer_single.LayerLocalOccupancyTrend,local_occupancy);
     }
     
   }//end of loop over MEs
@@ -339,9 +345,9 @@ void SiStripMonitorCluster::endJob(void){
 
     std::ofstream monitor_summary("monitor_cluster_summary.txt");
     monitor_summary<<"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<std::endl;
-    monitor_summary<<"SiStripMonitorCluster::endJob ClusterMEs.size()="<<ClusterMEs.size()<<std::endl;
+    monitor_summary<<"SiStripMonitorCluster::endJob ModuleMEMap.size()="<<ModuleMEMap.size()<<std::endl;
 
-    for(std::map<uint32_t, ModMEs>::const_iterator idet = ClusterMEs.begin(); idet!= ClusterMEs.end(); idet++ ){
+    for(std::map<uint32_t, ModMEs>::const_iterator idet = ModuleMEMap.begin(); idet!= ModuleMEMap.end(); idet++ ){
 
       monitor_summary<<"SiStripTkDQM|SiStripMonitorCluster"<<"      ++++++detid  "<<idet->first<<std::endl<<std::endl;
 
@@ -389,7 +395,7 @@ void SiStripMonitorCluster::endJob(void){
 // -- Reset MEs
 //------------------------------------------------------------------------------
 void SiStripMonitorCluster::ResetModuleMEs(uint32_t idet){
-  std::map<uint32_t, ModMEs >::iterator pos = ClusterMEs.find(idet);
+  std::map<uint32_t, ModMEs >::iterator pos = ModuleMEMap.find(idet);
   ModMEs mod_me = pos->second;
 
   if (moduleswitchncluson)            mod_me.NumberOfClusters->Reset();
@@ -421,9 +427,10 @@ void SiStripMonitorCluster::createModuleMEs(ModMEs& mod_single, uint32_t detid) 
   
   //ClusterPosition
   if(moduleswitchclusposon) {
+    short total_nr_strips = SiStripDetCabling_->nApvPairs(detid) * 2 * 128; // get correct # of avp pairs    
     hid = hidmanager.createHistoId("ClusterPosition","det",detid);
-    mod_single.ClusterPosition = bookME1D("TH1ClusterPos", hid.c_str());
-    dqmStore_->tag(mod_single.ClusterPosition, detid); // 6 APVs -> 768 strips
+    mod_single.ClusterPosition = dqmStore_->book1D(hid, hid, total_nr_strips, 0.5, total_nr_strips+0.5);
+    dqmStore_->tag(mod_single.ClusterPosition, detid);
     mod_single.ClusterPosition->setAxisTitle("cluster position [strip number +0.5]");
   }
   

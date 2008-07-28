@@ -3,6 +3,7 @@ module SiStripMonitorCluster = SiStripMonitorCluster
 {
     string ClusterProducer="siStripClusters"
     string ClusterLabel=""
+    string StripQualityLabel = ""
   #
     bool SelectAllDetectors = false
     bool ShowMechanicalStructureView = true
@@ -13,7 +14,6 @@ module SiStripMonitorCluster = SiStripMonitorCluster
     # can overwrite this in .cfg file with: replace SiStripMonitorCluster.OutputMEsInRootFile = true
     bool OutputMEsInRootFile = false
     string OutputFileName="SiStripMonitorCluster.root"
-    string StripQualityLabel = ""
     
     PSet TH1nClusters            = { int32 Nbinx = 21  double xmin = -0.5 double xmax = 10.5  bool layerswitchon = false bool moduleswitchon = true }       
     PSet TH1ClusterCharge        = { int32 Nbinx = 100 double xmin = 0.0  double xmax = 500.  bool layerswitchon = true bool moduleswitchon = true }	
