@@ -15,16 +15,50 @@ module SiStripMonitorCluster = SiStripMonitorCluster
     bool OutputMEsInRootFile = false
     string OutputFileName="SiStripMonitorCluster.root"
     
-    PSet TH1nClusters            = { int32 Nbinx = 11  double xmin = -0.5 double xmax = 10.5  bool layerswitchon = false bool moduleswitchon = true }       
-    PSet TH1ClusterCharge        = { int32 Nbinx = 100 double xmin = 0.0  double xmax = 500.  bool layerswitchon = true bool moduleswitchon = true }	
-    PSet TH1ClusterStoN          = { int32 Nbinx = 60  double xmin = 0.0  double xmax = 200.  bool layerswitchon = false bool moduleswitchon = true }
-    PSet TH1ClusterPos           = { int32 Nbinx = 768 double xmin = -0.5 double xmax = 767.5 bool layerswitchon = false bool moduleswitchon = true }
-    PSet TH1ClusterNoise         = { int32 Nbinx = 20  double xmin = 0.0  double xmax = 10.   bool layerswitchon = true bool moduleswitchon = true }     
-    PSet TH1ClusterWidth         = { int32 Nbinx = 20  double xmin = -0.5 double xmax = 19.5  bool layerswitchon = true bool moduleswitchon = true }  
+    PSet TH1nClusters = { int32 Nbinx = 11  
+                           double xmin = -0.5 
+                           double xmax = 10.5  
+                           bool layerswitchon = false 
+                           bool moduleswitchon = true }
+  
+    PSet TH1ClusterCharge = { int32 Nbinx = 200 
+                               double xmin = -0.5  
+                               double xmax = 799.5.  
+                               bool layerswitchon = true 
+                               bool moduleswitchon = true }
+
+    PSet TH1ClusterStoN = { int32 Nbinx = 100  
+                            double xmin = -0.5  
+                            double xmax = 299.5  
+                            bool layerswitchon = false 
+                            bool moduleswitchon = true }
+    PSet TH1ClusterPos = { int32 Nbinx = 768 
+                           double xmin = -0.5 
+                           double xmax = 767.5 bool 
+                           layerswitchon = false 
+                           bool moduleswitchon = true }
+    PSet TH1ClusterNoise = { int32 Nbinx = 20  
+                             double xmin = -0.5  
+                             double xmax = 9.5.   
+                             bool layerswitchon = true 
+                             bool moduleswitchon = true }     
+    PSet TH1ClusterWidth = { int32 Nbinx = 20  
+                             double xmin = -0.5 
+                             double xmax = 19.5  
+                             bool layerswitchon = true 
+                             bool moduleswitchon = true }  
     
-    PSet TH1ModuleLocalOccupancy = { int32 Nbinx = 20  double xmin = -0.5 double xmax = 0.95  bool layerswitchon = true bool moduleswitchon = true }
+    PSet TH1ModuleLocalOccupancy = { int32 Nbinx = 20  
+                                     double xmin = -0.5 double 
+                                     xmax = 0.95  
+                                     bool layerswitchon = true 
+                                     bool moduleswitchon = true }
     
-    PSet TH1NrOfClusterizedStrips = { int32 Nbinx = 20 double xmin = 0.0 double xmax = 100.0 bool layerswitchon = true bool moduleswitchon = true }
+    PSet TH1NrOfClusterizedStrips = { int32 Nbinx = 20 
+                                      double xmin = -0.5 
+                                      double xmax = 99.5 
+                                      bool layerswitchon = true 
+                                      bool moduleswitchon = true }
     
     ##select detectors
     PSet detectorson = {
